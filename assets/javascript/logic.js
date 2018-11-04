@@ -87,12 +87,22 @@ var unanswered = 0;
 var time = 31;
 var intervalId;
 
+const headerContainer = $("#header");
 const quizContainer = $("#quiz");
 const resultsContainer = $("#results");
 const timeContainer = $("#time");
+const timerContainer = $("#timer");
 const submitButton = $("#submit");
 const startButton = $("#start");
 const restartButton = $("#restart");
+
+submitButton.hide();
+restartButton.hide();
+function resetCounters() {
+    correct = 0;
+    incorrect = 0;
+    unanswered = 0;
+}
 
 function run() {
     startButton.toggle();
@@ -105,7 +115,9 @@ function decrement() {
     timeContainer.text(time);
     if (time === 0) {
         stop();
+        quizContainer.empty();
         showResults();
+        submitButton.toggle();
     };
 };
 
@@ -114,6 +126,11 @@ function stop() {
 }
 
 function buildQuiz() {
+    submitButton.show();
+    resetCounters();
+    timerContainer.show();
+    time = 31
+    quizContainer.empty();
     run();
     for (var i = 0; i < myQuestions.length; i++) {
         var questionHTML = buildQuestionHTML(myQuestions[i], i + 1);
@@ -150,6 +167,7 @@ function buildQuestionHTML(currentQuestion, questionNumber) {
 }
 ;
 function showResults() {
+    restartButton.show();
     stop();
     const answerContainers = document.querySelectorAll('.choices');
     myQuestions.forEach((currentQuestion, questionNumber) => {
@@ -161,9 +179,25 @@ function showResults() {
             correct++;
             answerContainers[questionNumber].style.color = "green";
         }
+        /*
+        ------------------------------------------------------------------------------
+        I couldn't get the radio buttons to register as checked or not,
+        so my logic doesn't work. Working on it late saturday,
+        ill fix it as soon as i can talk to a TA
+        ------------------------------------------------------------------------------
+        if userAnswer != currentQuestion.correct answer
+            incorrect++
+            style to red
+        else
+            unanswered++
+
+        append score counters to DOM
+        */
+
     })
 };
 
-
+timerContainer.hide();
 startButton.on("click", buildQuiz);
 submitButton.on("click", showResults);
+restartButton.on("click", buildQuiz);
